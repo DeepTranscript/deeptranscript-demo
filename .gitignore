@@ -1,0 +1,10 @@
+*.mp3
+*.flac
+*.mp4
+*.mkv
+*.webm
+*.wav
+.python-version
+.idea/
+venv/
+ngrok*
