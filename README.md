@@ -83,7 +83,7 @@ As you can see, the response indicates `state="pending"`. This is because DeepTr
 
 If you take a look to `shell#1`, you should have received transcription information by now…
 
-**Congrats**, you know have all the information you need to integrate the world’s best machine transcription technology directly into your own products and platforms !!!
+**Congrats !!! you know have all the information you need to integrate the world’s best machine transcription technology directly into your own products and platforms**
 
 ## Troubleshooting
 If anything goes wrong you will find all the information you need on [DeepTranscript Console](https://app.deeptranscript.com)
