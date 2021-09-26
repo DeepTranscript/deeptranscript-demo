@@ -66,7 +66,7 @@ $ export API_TOKEN=<your-api-token-from-deeptranscript-console> # see https://ap
 ## Create a new transcription request
 We will now see how to ask DeepTranscript's API to transcribe [./files/w3jLJU7DT5E_mono_.mp3](./files/w3jLJU7DT5E_mono.mp3) file. 
 
-NOTE: This file is given for simplicity and has been extracted from https://www.youtube.com/watch?v=w3jLJU7DT5E&ab_channel=GitHub using [the commands described below]()
+NOTE: This file is given for simplicity and has been extracted from [youtube](https://www.youtube.com/watch?v=w3jLJU7DT5E&ab_channel=GitHub) using [the commands described below](#extra)
 
 NOTE: we use `curl` here but, since it just an ordinary HTTP request, you can use any language/framework you want…
 
