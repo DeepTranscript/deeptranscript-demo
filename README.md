@@ -1,17 +1,18 @@
 ![database structure](./docs/logo.png)
 
 [DeepTranscript](https://www.deeptranscript.com) provides state-of-the-art speech-to-text accuracy in both english and french languages.
-In this repository you will see how simple it is to integrate to [DeepTranscript high availability API](https://app.deeptranscript.com/documentation).
+In this repository you will see how simple it is to integrate to [DeepTranscript High Availability API](https://app.deeptranscript.com/documentation).
 
 We will also use:
  - [python flask](https://flask.palletsprojects.com/en/2.0.x/) to start an HTTP server on your machine (listening on port 5000).
- - [ngrok](https://ngrok.com/) to make your server available from the outside
+ - [ngrok](https://ngrok.com/) to make your local server available from the outside
  - [youtube-dl](https://youtube-dl.org/) and [ffmpeg](https://www.ffmpeg.org/) to show you how to extract audio from a video file or from a youtube video
 
 
 
-__Before we begin:__
- - here is how [DeepTranscript API](https://app.deeptranscript.com/documentation) works
+
+## Before we begin
+ - Here is how [DeepTranscript API](https://app.deeptranscript.com/documentation) works
    ![Integration workflow](./docs/api-overview.jpg)
  - Make sure you [signed up](https://app.deeptranscript.com/signup) and get your 20h evaluation welcome bonus
  - Retrieve your API Token from [members configuration](https://app.deeptranscript.com/account/members)
@@ -40,9 +41,9 @@ $ curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --outpu
 ```
 
 Now that everything is installed you can start the flask server on a new shell `shell#1`. 
-This server listen on port 5000 and exposes 2 endpoints (see [./server.py](./server.py) for more info):
- - `/callback`, expecting POST requests and printing requests headers and bodies
- - `/files`, expecting GET requests and serving local files located in [./files](./files) folder
+This server will listen on port 5000 and expose 2 endpoints (see [./server.py](./server.py) for more info):
+ - `http://localhost:5000/callback`, expecting POST requests and printing requests headers and bodies
+ - `http://localhost:5000/files`, expecting GET requests and serving local files located in [./files](./files) folder
 ```shell
 $ cd ./path/to/deeptranscript-demo
 $ source ./venv/bin/activate
@@ -83,7 +84,7 @@ As you can see, the response indicates `state="pending"`. This is because DeepTr
 
 If you take a look to `shell#1`, you should have received transcription information by now…
 
-**Congrats !!! you know have all the information you need to integrate the world’s best machine transcription technology directly into your own products and platforms**
+**Congrats !!! you now have all the information you need to integrate the world’s best machine transcription technology directly into your own products and platforms**
 
 ## Troubleshooting
 If anything goes wrong you will find all the information you need on [DeepTranscript Console](https://app.deeptranscript.com)
