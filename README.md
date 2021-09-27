@@ -27,7 +27,7 @@ $ sudo apt install ffmpeg curl git python3-venv unzip flac
 $ git clone git@github.com:DeepTranscript/deeptranscript-demo.git deeptranscript-demo 
 $ cd deeptranscript-demo
 # setup virtualenv
-$ python3 -m venv
+$ python3 -m venv ./venv
 $ source ./venv/bin/activate
 $ (venv) python --version  # make sure it is 3.6+
 $ (venv) pip install -U pip
@@ -37,7 +37,7 @@ $ (venv) pip install flask youtube-dl requests
 $ curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --output ./ngrok.zip \
   && unzip ./ngrok.zip \
   && rm ./ngrok.zip \
-  && chmod +x ngrok  
+  && chmod +x ngrok
 ```
 
 Now that everything is installed you can start the flask server on a new shell `shell#1`. 
@@ -76,7 +76,7 @@ $ curl https://app.deeptranscript.com/api/transcriptions/ \
   --request POST \
   --header "Authorization: Bearer ${API_TOKEN}" \
   --header "Content-Type: application/json" \
-  --data '{"recording":"'$NGROK_URL'/files/w3jLJU7DT5E_mono.mp3","recordingFormat":"mp3","callbackUrl":"'$NGROK_URL'/callback","language":"'$LANGUAGE'"}' 
+  --data '{"recording":"'$NGROK_URL'/files/w3jLJU7DT5E_mono.mp3","recordingFormat":"mp3","callbackUrl":"'$NGROK_URL'/callback","language":"en"}' 
 ```
 
 As you can see, the response indicates `state="pending"`. This is because DeepTranscript API works asynchronously (as described below).
