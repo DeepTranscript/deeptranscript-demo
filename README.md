@@ -6,10 +6,8 @@ In this repository you will see how simple it is to integrate to [DeepTranscript
 We will also use:
  - [python flask](https://flask.palletsprojects.com/en/2.0.x/) to start an HTTP server on your machine (listening on port 5000).
  - [ngrok](https://ngrok.com/) to make your local server available from the outside
- - [youtube-dl](https://youtube-dl.org/) and [ffmpeg](https://www.ffmpeg.org/) to show you how to extract audio from a video file or from a youtube video
-
-
-
+ - [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [ffmpeg](https://www.ffmpeg.org/) to show you how to extract audio from a video file or from a youtube video
+ 
 
 ## Before we begin
  - Here is how [DeepTranscript API](https://app.deeptranscript.com/documentation) works
@@ -31,7 +29,7 @@ $ python3 -m venv ./venv
 $ source ./venv/bin/activate
 $ (venv) python --version  # make sure it is 3.6+
 $ (venv) pip install -U pip
-$ (venv) pip install flask youtube-dl requests
+$ (venv) pip install flask yt-dlp requests
 
 # setup ngrok
 $ curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --output ./ngrok.zip \
@@ -87,19 +85,21 @@ If you take a look to `shell#1`, you should have received transcription informat
 **Congrats !!! you now have all the information you need to integrate the world’s best machine transcription technology directly into your own products and platforms**
 
 ## Troubleshooting
+
 If anything goes wrong you will find all the information you need on [DeepTranscript Console](https://app.deeptranscript.com)
 
 
 ## Extra
-Here is how-to extract audio recording from a Youtube video using youtube-dl and ffmpeg:
+
+Here is how-to extract the audio recording from a Youtube video using [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [ffmpeg](https://www.ffmpeg.org/):
 ```shell
 $ cd ./path/to/deeptranscript-demo
 $ source ./venv/bin/activate
 $ cd ./files
 $ export YOUTUBE_ID=<the-id-of-the-video>  # ex: w3jLJU7DT5E
-$ youtube-dl https://www.youtube.com/watch?v=$YOUTUBE_ID --id --extract-audio --audio-format mp3 --prefer-ffmpeg
+$ yt-dlp https://www.youtube.com/watch?v=$YOUTUBE_ID --id --extract-audio --audio-format flac --prefer-ffmpeg
 # IMPORTANT: we fetch left channel only since it is the same as right channel. If you send stereo files to DeepTranscript API it will transcribe each channel independently
-$ ffmpeg -y -i ${YOUTUBE_ID}.mp3 -map_channel 0.0.0 ./${YOUTUBE_ID}_mono.mp3
-$ echo "local url: http://localhost:5000/files/${YOUTUBE_ID}_mono.mp3"
-$ echo "public url: ${NGROK_URL}/files/${YOUTUBE_ID}_mono.mp3"
+$ ffmpeg -y -i ${YOUTUBE_ID}.flac -map_channel 0.0.0 ./${YOUTUBE_ID}_mono.flac
+$ echo "local url: http://localhost:5000/files/${YOUTUBE_ID}_mono.flac"
+$ echo "public url: ${NGROK_URL}/files/${YOUTUBE_ID}_mono.flac"
 ```

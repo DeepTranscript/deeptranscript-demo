@@ -4,6 +4,8 @@
 *.mkv
 *.webm
 *.wav
+*.mov
+*.MOV
 .python-version
 .idea/
 venv/
