@@ -14,6 +14,7 @@ With Streaming API, you can expect less than 200 ms response time on average for
 ## Nodejs example
 
 ```shell script
+$ cd ./path/to/deeptranscript-demo/example-streaming-mode
 $ export API_TOKEN=<your-api-token-from-deeptranscript-console>  # see https://app.deeptranscript.com/account/members
 $ LANGUAGE=en node ./pipe-microphone.js
 ```

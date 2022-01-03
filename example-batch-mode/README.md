@@ -5,8 +5,14 @@ Here is how it works:
 ![Integration workflow](../docs/batch-api-overview.jpg)
 
 In this example we will use:
- - [python flask](https://flask.palletsprojects.com/en/2.0.x/) to start an HTTP server on your machine (listening on port 5000).
- - [ngrok](https://ngrok.com/) to make your local server available from the outside
+ - [python flask](https://flask.palletsprojects.com/en/2.0.x/) to start an HTTP server on your machine
+   
+   This server will listen on port 5000 and expose 2 endpoints (see [./server.py](./server.py) for more info):
+   - `http://localhost:5000/callback`, expecting POST requests and printing requests headers and bodies
+   - `http://localhost:5000/files`, expecting GET requests and serving local files located in [../files](../files) folder
+ 
+ - [ngrok](https://ngrok.com/) to make your local server available from the internet
+ 
  - [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [ffmpeg](https://www.ffmpeg.org/) to show you how to extract audio from a video file or from a youtube video
  
 
@@ -23,7 +29,7 @@ In this example we will use:
 ```shell
 $ sudo apt install ffmpeg curl git python3-venv unzip flac
 $ git clone git@github.com:DeepTranscript/deeptranscript-demo.git deeptranscript-demo 
-$ cd deeptranscript-demo/batch-example
+$ cd deeptranscript-demo/example-batch-mode
 # setup virtualenv
 $ python3 -m venv ./venv
 $ source ./venv/bin/activate
@@ -39,11 +45,11 @@ $ curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --outpu
 ```
 
 Now that everything is installed you can start the flask server on a new shell `shell#1`. 
-This server will listen on port 5000 and expose 2 endpoints (see [./server.py](batch-example/server.py) for more info):
+This server will listen on port 5000 and expose 2 endpoints (see [./server.py](./server.py) for more info):
  - `http://localhost:5000/callback`, expecting POST requests and printing requests headers and bodies
- - `http://localhost:5000/files`, expecting GET requests and serving local files located in [./files](./files) folder
+ - `http://localhost:5000/files`, expecting GET requests and serving local files located in [../files](../files) folder
 ```shell
-$ cd ./path/to/deeptranscript-demo/batch-example
+$ cd ./path/to/deeptranscript-demo/example-batch-mode
 $ source ./venv/bin/activate
 $ (venv) python server.py
 ```
@@ -51,13 +57,13 @@ $ (venv) python server.py
 Now start ngrok on another shell `shell#2` to make the flask server available from Internet
 ```shell
 # open a new shell and start ngrok
-$ cd ./path/to/deeptranscript-demo/batch-example
+$ cd ./path/to/deeptranscript-demo/example-batch-mode
 $ ./ngrok http 5000 --region eu
 ```
 
 finally, open a third shell (which will be the main shell from now on) and set `NGROK_URL` and `API_TOKEN` environment variables as described below
 ```shell
-$ cd ./path/to/deeptranscript-demo/batch-example
+$ cd ./path/to/deeptranscript-demo/example-batch-mode
 $ export NGROK_URL=<public-url-from-ngrok>  # keep track of ngrok https URL from shell#2
 $ export API_TOKEN=<your-api-token-from-deeptranscript-console> # see https://app.deeptranscript.com/account/members
 ``` 

@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "![database structure](./docs/logo.png)",
-  "main": "streaming-example/node-client.js",
+  "main": "example-streaming-mode/node-client.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

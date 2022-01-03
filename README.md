@@ -3,9 +3,9 @@
 [DeepTranscript](https://www.deeptranscript.com) provides state-of-the-art speech-to-text accuracy in both english and french languages.
 In this repository you will see how simple it is to integrate to [DeepTranscript High Availability API](https://app.deeptranscript.com/documentation).
 
-For batch transcription, see [batch-example](./batch-example) 
+For batch transcription, see [example-batch-mode](./example-batch-mode) 
 
-For streaming, see [streaming-example](./streaming-example) 
+For streaming, see [example-streaming-mode](./example-streaming-mode) 
 
 
 **Before you begin**
