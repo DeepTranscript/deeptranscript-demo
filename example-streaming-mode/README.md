@@ -18,3 +18,5 @@ $ cd ./path/to/deeptranscript-demo/example-streaming-mode
 $ export API_TOKEN=<your-api-token-from-deeptranscript-console>  # see https://app.deeptranscript.com/account/members
 $ LANGUAGE=en node ./pipe-microphone.js
 ```
+
+see [./pipe-microphone.js](./pipe-microphone.js) for more information

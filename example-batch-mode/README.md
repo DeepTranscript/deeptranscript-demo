@@ -1,13 +1,13 @@
-[DeepTranscript BATCH API](https://app.deeptranscript.com/documentation#operation/transcriptions_create) let you transcribe audio recordings in seconds. 
+[DeepTranscript BATCH API](https://app.deeptranscript.com/documentation#operation/transcriptions_create) let you transcribe audio recordings in seconds 
 
-Here is how it works:
+**Here is how it works:**
 
 ![Integration workflow](../docs/batch-api-overview.jpg)
 
 In this example we will use:
  - [python flask](https://flask.palletsprojects.com/en/2.0.x/) to start an HTTP server on your machine
    
-   This server will listen on port 5000 and expose 2 endpoints (see [./server.py](./server.py) for more info):
+   This server will listen on port 5000 and expose 2 endpoints (see [./server.py](./server.py) for more information):
    - `http://localhost:5000/callback`, expecting POST requests and printing requests headers and bodies
    - `http://localhost:5000/files`, expecting GET requests and serving local files located in [../files](../files) folder
  
@@ -69,7 +69,7 @@ $ export API_TOKEN=<your-api-token-from-deeptranscript-console> # see https://ap
 ``` 
 
 ## Create a new transcription request
-We will now see how to tell DeepTranscript's API to transcribe [./files/w3jLJU7DT5E_mono_.mp3](./files/w3jLJU7DT5E_mono.mp3) file. 
+We will now see how to tell DeepTranscript's API to transcribe [../files/w3jLJU7DT5E_mono_.mp3](../files/w3jLJU7DT5E_mono.mp3) file. 
 
 NOTE: This file is given for simplicity and has been extracted from [youtube](https://www.youtube.com/watch?v=w3jLJU7DT5E&ab_channel=GitHub) using [the commands described below](#extra)
 
