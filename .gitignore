@@ -10,3 +10,4 @@
 .idea/
 venv/
 ngrok*
+node_modules

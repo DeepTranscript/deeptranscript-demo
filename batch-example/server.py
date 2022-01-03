@@ -13,7 +13,7 @@ def webhook_handler():
 
 @app.route('/files/<filename>', methods=['GET'])
 def getfile(filename):
-    return send_from_directory('./files', filename)
+    return send_from_directory('../files', filename)
 
 
 if __name__ == "__main__":
