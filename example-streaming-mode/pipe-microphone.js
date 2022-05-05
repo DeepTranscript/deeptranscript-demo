@@ -12,6 +12,7 @@ const micInstance = mic({
     rate: sampleRate.toString(),
     channels: '1',
     device: 'plughw:0,0',  // see $ arecord --list-devices
+    debug: true,
 });
 
 const micStream = micInstance.getAudioStream();
