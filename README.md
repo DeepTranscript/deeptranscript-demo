@@ -35,7 +35,7 @@ $ getAudioStreamSomehow | curl \
   https://stream.deeptranscript.com/\?language\=fr\&sampleRate\=8000\&format\=s16le\&localizeWords\=1
 ```
 
-see [./streaming/http](./streaming/http) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_http_stream) for more information 
+see [./examples/streaming/http](./examples/streaming/http) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_http_stream) for more information 
 
 
 
