@@ -49,6 +49,6 @@ function stopMicrophone() {
     start = new Date().valueOf();  // start counting on mic end
 }
 
-readline.question('Microphone listening. Press enter or ctrl+C once you are done…', () => stopMicrophone());
+readline.question('Microphone listening. Press enter or ctrl+C once you are done speaking…', () => stopMicrophone());
 process.on('SIGTERM', stopMicrophone);
 process.on('SIGINT', stopMicrophone);
