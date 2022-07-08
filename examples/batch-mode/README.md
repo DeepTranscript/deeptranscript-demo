@@ -16,6 +16,7 @@ In this example we will use:
 ## Before you begin
  - Make sure you [signed up](https://app.deeptranscript.com/signup) and get your 20h evaluation welcome bonus
  - Retrieve your API Token from [members configuration](https://app.deeptranscript.com/account/members)
+ - Make sure all [dependencies are installed](../../readme.md#setup-debian-or-ubuntu)
 
 
 ## Getting started: 
