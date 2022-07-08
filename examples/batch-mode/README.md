@@ -2,7 +2,7 @@
 
 **Here is how it works:**
 
-![Integration workflow](../docs/batch-api-overview.jpg)
+![Integration workflow](../../docs/batch-api-overview.jpg)
 
 In this example we will use:
  - [python flask](https://flask.palletsprojects.com/en/2.0.x/) to start an HTTP server on your machine
