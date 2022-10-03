@@ -11,13 +11,23 @@ With WEBSOCKET Streaming API, you can process input streams of any size and get 
  - Retrieve your API Token from [members configuration](https://app.deeptranscript.com/account/members)
  - Make sure all [dependencies are installed](/README.md#setup-debian-or-ubuntu)
 
-## Nodejs example
+## Nodejs
+
+Those examples can generate audacity files for displaying the transcription workflow.
+To activate this behavior, you need to add `NODE_DEBUG=true` environment variable and ffmpeg in your $PATH (tested on `4.2.7`).
 
 ```shell script
 $ cd ./path/to/deeptranscript-demo/
 $ npm install
 $ export API_TOKEN=<your-api-token-from-deeptranscript-console>  # see https://app.deeptranscript.com/account/members
-$ LANGUAGE=en node ./examples/streaming/websocket/pipe-microphone.js
+$ LANGUAGE=en node ./examples/streaming/websocket/pipe-<microphone|file>-audacity.js
 ```
 
-see [./pipe-microphone.js](./pipe-microphone.js) for more information
+Data will be generated in a subdirectory of `outputDir`.
+The audacity contains multiples tracks:
+- speeches: visualize speeches positions overtime
+- words: visualize words positions overtime
+- audio: the audiofile
+- apiStatus: status return by DeeptranscriptAPI
+- feedback: visualize the end of voice detection
+- socketBytesSend: visualize socket activity
