@@ -1,12 +1,10 @@
-![database structure](./docs/logo.png)
+![logo deeptranscript](./docs/logo.png)
 
 [DeepTranscript](https://www.deeptranscript.com) provides state-of-the-art speech-to-text accuracy in both english and french languages.
 In this repository you will see how simple it is to integrate to [DeepTranscript High Availability API](https://app.deeptranscript.com/documentation).
 
-
-
 ## Batch mode
-You have [wav](https://en.wikipedia.org/wiki/WAV), [mp3](https://en.wikipedia.org/wiki/MP3) or [flac](https://en.wikipedia.org/wiki/FLAC) audio recordings and you want an accurate transcription of what has being said ? [batch mode](https://app.deeptranscript.com/documentation#operation/transcriptions_create) is all you need ! 
+You have [wav](https://en.wikipedia.org/wiki/WAV), [mp3](https://en.wikipedia.org/wiki/MP3) or [flac](https://en.wikipedia.org/wiki/FLAC) audio recordings and you want an accurate transcription of what has being said ? [batch mode](https://app.deeptranscript.com/documentation#operation/transcriptions_create) is all you need !
 
 **CURL example**
 ```shell
@@ -17,7 +15,7 @@ $ curl https://app.deeptranscript.com/api/transcriptions/ \
   --data '{"recording":"[PUBLIC_URL_TO_AUDIO_RECORDING]","recordingFormat":"mp3","callbackUrl":"[URL_TO_CALL_ONCE_TRANSCRIPTION_READY]","language":"en"}'
 ```
 
-See [./examples/batch-mode](./examples/batch-mode) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_create) for more information 
+See [./examples/batch-mode](./examples/batch-mode) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_create) for more information
 
 
 ## Streaming Mode
@@ -35,21 +33,19 @@ $ getAudioStreamSomehow | curl \
   https://stream.deeptranscript.com/\?language\=fr\&sampleRate\=8000\&format\=s16le\&localizeWords\=1
 ```
 
-see [./examples/streaming/http](./examples/streaming/http) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_http_stream) for more information 
-
-
+see [./examples/streaming/http](./examples/streaming/http) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_http_stream) for more information
 
 With **[WebSocket streaming](https://app.deeptranscript.com/documentation#operation/transcriptions_ws_stream)**, you can process input streams of any size and get intermediate results indicating if user is speaking and what is being said in almost realtime.
 
-see [./examples/streaming/websocket](./examples/streaming/websocket) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_ws_stream) for more information 
+see [./examples/streaming/websocket](./examples/streaming/websocket) and [API documentation](https://app.deeptranscript.com/documentation#operation/transcriptions_ws_stream) for more information
 
 
 ## Before you begin
 
  - Make sure you [signed up](https://app.deeptranscript.com/signup) and get your 20h evaluation welcome bonus
  - Retrieve your API Token from [members configuration](https://app.deeptranscript.com/account/members)
- - Check requirements and dependencies 
-   
+ - Check requirements and dependencies
+
 
 ### Code examples requirements
 
@@ -60,7 +56,7 @@ see [./examples/streaming/websocket](./examples/streaming/websocket) and [API do
 ### Setup (debian or ubuntu)
 ```shell
 $ sudo apt install ffmpeg curl git python3-venv unzip flac
-$ git clone git@github.com:DeepTranscript/deeptranscript-demo.git deeptranscript-demo 
+$ git clone git@github.com:DeepTranscript/deeptranscript-demo.git deeptranscript-demo
 $ cd deeptranscript-demo
 
 # setup python virtualenv
@@ -80,10 +76,6 @@ $ curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --outpu
   && chmod +x ngrok
 ```
 
-
 ## Troubleshooting
 
 If anything goes wrong you will find all the information you need on [DeepTranscript Console](https://app.deeptranscript.com)
-
-
-
