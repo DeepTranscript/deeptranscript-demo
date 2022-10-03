@@ -1,23 +1,21 @@
 {
   "name": "deeptranscript-demo",
-  "private": true,
+  "private": false,
   "version": "1.0.0",
-  "description": "![database structure](./docs/logo.png)",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "Examples for interact with Deeptranscript",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DeepTranscript/deeptranscript-demo.git"
   },
-  "author": "",
+  "author": "contact@deeptranscript.com",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/DeepTranscript/deeptranscript-demo/issues"
   },
-  "homepage": "https://github.com/DeepTranscript/deeptranscript-demo#readme",
+  "homepage": "https://www.deeptranscript.com/",
   "dependencies": {
     "form-data": "^4.0.0",
+    "lodash": "^4.17.21",
     "mic": "^2.1.2",
     "request": "^2.88.2",
     "wav": "^1.0.2",
