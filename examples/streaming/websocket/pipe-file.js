@@ -11,7 +11,6 @@ const { API_TOKEN } = process.env; // see https://app.deeptranscript.com/account
 const chunks = [];
 const tracing = {
     apiEvents: [],
-    clientBytesEvents: [],
 };
 const outputDir = '/tmp';
 const sampleRate = 8000;
@@ -70,21 +69,15 @@ socket.once('open', () => {
     console.log('socket opened');
     // Raw data is sent as is, no preprocessing needed
     audioStream.on('data', (bytes) => {
-        const localStart = new Date().valueOf();
         socket.send(bytes, { binary: true });
         chunks.push(bytes);
-        const took = new Date().valueOf() - localStart;
-        tracing.clientBytesEvents.push({ start: localStart - refTime, end: localStart - refTime + took, message: 'send data' });
     });
 
     // IMPORTANT: send an empty buffer to tell DT to terminate
     // if you don't, transcription will stop automatically after 3s not receiving any data
     audioStream.on('end', () => {
-        const localStart = new Date().valueOf();
         chunks.push(Buffer.alloc(0));
         socket.send(Buffer.from([]), { binary: true });
-        const took = new Date().valueOf() - localStart;
-        tracing.clientBytesEvents.push({ start: localStart - refTime, end: localStart - refTime + took, message: 'send end' });
     });
 });
 socket.on('error', (err) => console.error(err));

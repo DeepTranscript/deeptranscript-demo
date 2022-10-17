@@ -39,7 +39,7 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
 exports.createAudacity = createAudacity;
 
 function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
-    if (!tracing.hasOwnProperty('apiEvents') || !tracing.hasOwnProperty('clientBytesEvents')) {
+    if (!tracing.hasOwnProperty('apiEvents')) {
         console.error('Can not generate audacity file missing objects');
         return;
     }
@@ -48,7 +48,6 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
     mkdirSync(`${outputDir}/deeptranscript-${lastEvent.uid}`);
     // Write all events on disk.
     writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.apiEvents.json`, JSON.stringify(tracing.apiEvents), { encoding: 'utf-8' });
-    writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.clientsBytesEvents.json`, JSON.stringify(tracing.clientBytesEvents), { encoding: 'utf-8' });
 
     const fileOutputName = `${outputDir}/deeptranscript-${lastEvent.uid}/${lastEvent.uid}.wav`;
     if (source.hasOwnProperty('path')) {
