@@ -21,7 +21,7 @@ $ cd ./path/to/deeptranscript-demo/
 $ npm install
 $ export API_TOKEN=<your-api-token-from-deeptranscript-console>  # see https://app.deeptranscript.com/account/members
 $ LANGUAGE=<en|fr> node ./examples/streaming/websocket/pipe-<microphone|file>.js
-
+```
 
 Data will be generated in a subdirectory of `outputDir`.
 The audacity contains multiples tracks:
