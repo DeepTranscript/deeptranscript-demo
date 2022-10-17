@@ -23,11 +23,4 @@ $ export API_TOKEN=<your-api-token-from-deeptranscript-console>  # see https://a
 $ LANGUAGE=<en|fr> node ./examples/streaming/websocket/pipe-<microphone|file>.js
 
 
-Data will be generated in a subdirectory of `outputDir`.
-The audacity contains multiples tracks:
-- speeches: visualize speeches positions overtime
-- words: visualize words positions overtime
-- audio: the audiofile
-- apiStatus: status return by DeeptranscriptAPI
-- feedback: visualize the end of voice detection
-- socketBytesSend: visualize socket activity
+_NOTE_: this examples generate audacity data to help you visualize words localizations and response times
