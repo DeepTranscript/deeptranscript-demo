@@ -112,6 +112,7 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
             },
         ],
     );
+
     return `${outputDir}/deeptranscript-${lastEvent.uid}/audacity.aup`
 }
 exports.generateTracing = generateTracing;

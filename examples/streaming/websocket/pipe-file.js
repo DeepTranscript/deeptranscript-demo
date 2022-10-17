@@ -3,6 +3,7 @@ const ws = require('ws');
 const { createReadStream } = require('fs');
 const { Transform } = require('stream');
 const path = require('path');
+
 const { generateTracing } = require('../../utils');
 
 const { API_TOKEN } = process.env; // see https://app.deeptranscript.com/account/members
@@ -16,6 +17,7 @@ const outputDir = '/tmp';
 const sampleRate = 8000;
 const dataFormat = 's16le';
 const fileName = `${path.dirname(require.main.filename)}/../../_files/count.wav`;
+
 // Split file in small parts and send them with the right delay to simulate live-streaming
 const audioStream = createReadStream(fileName)
     .pipe(new Transform({
