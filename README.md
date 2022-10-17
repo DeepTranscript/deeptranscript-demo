@@ -1,4 +1,4 @@
-![logo deeptranscript](./docs/logo.png)
+![logo deeptranscript](./docs/logo_round.png)
 
 [DeepTranscript](https://www.deeptranscript.com) provides state-of-the-art speech-to-text accuracy in both english and french languages.
 In this repository you will see how simple it is to integrate to [DeepTranscript High Availability API](https://app.deeptranscript.com/documentation).
