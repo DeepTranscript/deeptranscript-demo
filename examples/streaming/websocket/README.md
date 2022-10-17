@@ -21,6 +21,6 @@ $ cd ./path/to/deeptranscript-demo/
 $ npm install
 $ export API_TOKEN=<your-api-token-from-deeptranscript-console>  # see https://app.deeptranscript.com/account/members
 $ LANGUAGE=<en|fr> node ./examples/streaming/websocket/pipe-<microphone|file>.js
-
+```
 
 _NOTE_: this examples generate audacity data to help you visualize words localizations and response times
