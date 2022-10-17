@@ -3,7 +3,7 @@ const ws = require('ws');
 const { createReadStream } = require('fs');
 const { Transform } = require('stream');
 const path = require('path');
-const { generateTracing, realtimeAudioStream } = require('../../utils');
+const { generateTracing } = require('../../utils');
 
 const { API_TOKEN } = process.env; // see https://app.deeptranscript.com/account/members
 
@@ -16,9 +16,42 @@ const outputDir = '/tmp';
 const sampleRate = 8000;
 const dataFormat = 's16le';
 const fileName = `${path.dirname(require.main.filename)}/../../_files/count.wav`;
-// Split file in small parts
-const fileChunkStream = createReadStream(fileName)
-    .pipe(new WebRtcVadChunkTransform(120));
+// Split file in small parts and send them with the right delay to simulate live-streaming
+const audioStream = createReadStream(fileName)
+    .pipe(new Transform({
+        transform(chunk, encoding, done) {
+            "transform input stream into chunks of XXms"
+            if (!this.chunkSize) {
+                const frameDuration = 50;
+                this.chunkSize = frameDuration * sampleRate / 1000 * 2;
+                this.buffer = Buffer.alloc(0); // local buffer
+            }
+            if (this.buffer.length) {
+                chunk = Buffer.concat([this.buffer, chunk]);
+                this.buffer = Buffer.alloc(0);
+            }
+            while (chunk.length >= this.chunkSize) {
+                this.push(chunk.slice(0, this.chunkSize));
+                chunk = chunk.slice(this.chunkSize);
+            }
+            if (chunk.length) {
+                this.buffer = chunk.slice(0); // copy
+            }
+            done();
+        },
+    }))
+    .pipe(new Transform({
+        transform(chunk, encoding, callback) {
+            "send chunks of XXms with the right delay to simulate live-streaming"
+            const start = new Date().valueOf();
+            this.push(chunk);
+            const took = new Date().valueOf() - start;
+            setTimeout(
+                callback,
+                ((chunk.length * 1000) / (sampleRate * 2) - took),
+            );
+        },
+    }));
 
 // This will be use as reference for tracing generation
 const refTime = new Date().valueOf();
@@ -33,22 +66,8 @@ const qs = querystring.stringify({
 const socket = new ws.WebSocket(`wss://:${API_TOKEN}@stream.deeptranscript.com/?${qs}`);
 socket.once('open', () => {
     console.log('socket opened');
-
-    // stream file content
-    const dataStream = fileChunkStream.pipe(new Transform({
-        transform(chunk, encoding, callback) {
-            const start = new Date().valueOf();
-            this.push(chunk);
-            const took = new Date().valueOf() - start;
-            setTimeout(
-                callback,
-                ((chunk.length * 1000) / (sampleRate * 2) - took),
-            );
-        },
-    }));
-
     // Raw data is sent as is, no preprocessing needed
-    dataStream.on('data', (bytes) => {
+    audioStream.on('data', (bytes) => {
         const localStart = new Date().valueOf();
         socket.send(bytes, { binary: true });
         chunks.push(bytes);
@@ -58,7 +77,7 @@ socket.once('open', () => {
 
     // IMPORTANT: send an empty buffer to tell DT to terminate
     // if you don't, transcription will stop automatically after 3s not receiving any data
-    dataStream.on('end', () => {
+    audioStream.on('end', () => {
         const localStart = new Date().valueOf();
         chunks.push(Buffer.alloc(0));
         socket.send(Buffer.from([]), { binary: true });
@@ -73,13 +92,9 @@ socket.on('message', (data) => {
     console.log('message', message);
 });
 socket.on('close', () => {
-    console.log('close event received => done');
-
-    if (process.env.NODE_DEBUG) {
-        // This will create an audacity file with a timeline of events and data
-        generateTracing(refTime, outputDir, { path: fileName, sampleRate, channel: 0, format: dataFormat }, tracing);
-    }
-
+    // This will create an audacity file with a timeline of events and data
+    const audacityFname = generateTracing(refTime, outputDir, { path: fileName, sampleRate, channel: 0, format: dataFormat }, tracing);
+    console.log(`websocket close event received => transcription complete\nSee "$ audacity ${audacityFname}" for more info`);
     process.exit(0);
 });
 

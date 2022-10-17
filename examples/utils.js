@@ -112,33 +112,6 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
             },
         ],
     );
+    return `${outputDir}/deeptranscript-${lastEvent.uid}/audacity.aup`
 }
 exports.generateTracing = generateTracing;
-
-class realtimeAudioStream extends stream.Transform {
-    // cut input stream into fixed sized chunks
-    constructor(frameDuration = 30) {
-        super({
-            flush: (callback) => {
-                callback();
-            },
-            transform: (chunk, encoding, done) => {
-                if (this.buffer.length) {
-                    chunk = Buffer.concat([this.buffer, chunk]);
-                    this.buffer = Buffer.alloc(0);
-                }
-                while (chunk.length >= this.chunkSize) {
-                    this.push(chunk.slice(0, this.chunkSize));
-                    chunk = chunk.slice(this.chunkSize);
-                }
-                if (chunk.length) {
-                    this.buffer = chunk.slice(0); // copy
-                }
-                done();
-            },
-        });
-        this.chunkSize = frameDuration * 8 * 2;
-        this.buffer = Buffer.alloc(0); // local buffer
-    }
-}
-exports.realtimeAudioStream = realtimeAudioStream;
