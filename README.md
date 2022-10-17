@@ -1,3 +1,5 @@
+[![CI](https://github.com/DeepTranscript/deeptranscript-demo/actions/workflows/lint.yml/badge.svg)](https://github.com/DeepTranscript/deeptranscript-demo/actions/workflows/lint.yml)
+
 ![logo deeptranscript](./docs/logo_round.png)
 
 [DeepTranscript](https://www.deeptranscript.com) provides state-of-the-art speech-to-text accuracy in both english and french languages.
