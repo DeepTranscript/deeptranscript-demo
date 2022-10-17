@@ -24,7 +24,7 @@ See [./examples/batch-mode](./examples/batch-mode) and [API documentation](https
 With **[HTTP streaming](https://app.deeptranscript.com/documentation#operation/transcriptions_http_stream)**, you can pipe up to 60s of raw audio data to a standard HTTP request. Once input stream ends you get transcription results in no time.
 
 
-**CURL example**
+**cURL example**
 ```shell
 $ getAudioStreamSomehow | curl \
   -H "Authorization: Bearer [API_TOKEN]" \
