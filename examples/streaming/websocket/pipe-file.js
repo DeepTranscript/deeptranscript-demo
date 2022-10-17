@@ -24,7 +24,7 @@ const audioStream = createReadStream(fileName)
         transform(chunk, encoding, done) {
             "transform input stream into chunks of XXms"
             if (!this.chunkSize) {
-                const frameDuration = 50;
+                const frameDuration = 100;
                 this.chunkSize = frameDuration * sampleRate / 1000 * 2;
                 this.buffer = Buffer.alloc(0); // local buffer
             }
@@ -45,12 +45,12 @@ const audioStream = createReadStream(fileName)
     .pipe(new Transform({
         transform(chunk, encoding, callback) {
             "send chunks of XXms with the right delay to simulate live-streaming"
-            const start = new Date().valueOf();
-            this.push(chunk);
-            const took = new Date().valueOf() - start;
             setTimeout(
-                callback,
-                ((chunk.length * 1000) / (sampleRate * 2) - took),
+                () => {
+                    this.push(chunk);
+                    callback();
+                },
+                ((chunk.length * 1000) / (sampleRate * 2) - 1),
             );
         },
     }));

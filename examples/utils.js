@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
-const { last, isNull } = require('lodash');
+const { last, isNull, isEmpty } = require('lodash');
 const { mkdirSync, writeFileSync } = require('fs');
 const { execSync } = require('child_process');
 
@@ -15,7 +15,7 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
     execSync(`ffmpeg -y -loglevel quiet -i ${fileName} -map_channel 0.0.${channel} ${outputDir}/audacity_data/${path.basename(fileName)}_channel.wav`);
     const getLabel = (l) => `<label t="${l.start}" t1="${l.end}" title="${l.text}"/>`;
     const getTrack = (t) => `
-        <labeltrack name="${t.trackName}" numlabels="${t.labels.length}" height="73" minimized="0" isSelected="0">
+        <labeltrack name="${t.trackName}" numlabels="${t.labels.length}" height="${t.height || 73}" minimized="0" isSelected="0">
         ${t.labels.map(getLabel).join('\n')}
         </labeltrack>`;
     const preTracksString = preTracks.map(getTrack);
@@ -23,7 +23,7 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
     console.log(`writing audacity file at ${outputDir}/audacity.aup`);
     fs.writeFileSync(`${outputDir}/audacity.aup`, `<?xml version="1.0" standalone="no" ?>
               <!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
-              <project xmlns="http://audacity.sourceforge.net/xml/" projname="{source_name}_data" version="1.3.0" audacityversion="2.2.1" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="1" rate="16000.0" snapto="off" selectionformat="seconds" frequencyformat="Hz" bandwidthformat="octaves">
+              <project xmlns="http://audacity.sourceforge.net/xml/" projname="{source_name}_data" version="1.3.0" audacityversion="2.2.1" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="150" rate="16000.0" snapto="off" selectionformat="seconds" frequencyformat="Hz" bandwidthformat="octaves">
                      <tags>
                              <tag name="Software" value="Lavf57.83.100"/>
                              <tag name="Copyright" value="callity.fr"/>
@@ -54,7 +54,7 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
     if (source.hasOwnProperty('path')) {
         execSync(`ffmpeg -y -loglevel quiet -f ${source.format} -sample_rate ${source.sampleRate} -i ${source.path} -map_channel 0.0.${source.channel} ${fileOutputName}`);
     } else {
-    // We assume it's from mic
+        // We assume it's from mic
         const micFileName = `${outputDir}/deeptranscript-${lastEvent.uid}/mic.pcm`;
         writeFileSync(micFileName, source.data, { encoding: 'binary' });
         execSync(`ffmpeg -y -loglevel quiet -f s16le -sample_rate ${source.sampleRate} -i ${micFileName} -map_channel 0.0.${source.channel} ${fileOutputName}`);
@@ -65,15 +65,6 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
         fileOutputName,
         0,
         [
-            {
-                trackName: 'speeches',
-                labels: tracing.apiEvents.map((event) => ({ ...last(event.speeches), event }))
-                    .map((speech, i) => ({
-                        start: speech.start,
-                        end: isNull(speech.end) ? speech.event.audioDuration : speech.end,
-                        text: `#${i}:${speech.status ? speech.status : 'empty'}:${speech.text ? speech.text : 'empty'}`,
-                    })),
-            },
             {
                 trackName: 'words',
                 labels: lastEvent.speeches
@@ -87,28 +78,40 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
         ],
         [
             {
-                trackName: 'apiStatus',
-                labels: tracing.apiEvents.map((event, i) => ({
-                    start: roundMs((event.timestamp - refTime) / 1000),
-                    end: roundMs((event.timestamp - refTime) / 1000),
-                    text: `#${i}:${event.status}`,
-                })),
+                trackName: 'status',
+                height: 50,
+                labels:  tracing.apiEvents.reduce(
+                    (memo, event, i) => {
+                        const currentState = memo[memo.length - 1];
+
+                        if (event.status === currentState.text) {
+                            return memo;
+                        }
+                        const currentLocationSeconds = roundMs((event.timestamp - refTime) / 1000)
+                        currentState.end = currentLocationSeconds;
+                        memo.push({ start: currentLocationSeconds, end: currentLocationSeconds, text: event.status});
+                        return memo;
+                    },
+                    [{ start: 0, text: "transcribing", end: null}]),
             },
             {
-                trackName: 'feedback',
-                labels: tracing.apiEvents.filter((e, i) => e.status === 'waiting').map((event, i) => ({
-                    start: last(event.speeches).end,
-                    end: roundMs((event.timestamp - refTime) / 1000),
-                    text: `#${i}:gracePeriod ${roundMs(((event.timestamp - refTime)) - last(event.speeches).end * 1000)}ms`,
-                })),
-            },
-            {
-                trackName: 'socketBytesSend',
-                labels: tracing.clientBytesEvents.map((event, i) => ({
-                    start: roundMs(event.start / 1000),
-                    end: roundMs(event.end / 1000),
-                    text: `#${i}:${event.message} in ${roundMs(event.end - event.start)}ms`,
-                })),
+                trackName: 'speeches',
+                height: 300,
+                labels: tracing.apiEvents.filter((e) => e.speeches && e.speeches.length && e.text !== null).reduce(
+                    (memo, event, i) => {
+                        const speech = last(event.speeches);
+                        memo.push({
+                            start: speech.start,
+                            end: event.audioDuration,
+                            text: `#${i}:audio:${isEmpty(speech.text) ? 'empty' : speech.text}`,
+                        });
+                        memo.push({
+                            start: event.audioDuration,
+                            end: roundMs((event.timestamp - refTime) / 1000),
+                            text: `#${i}:latency:${Math.round(((event.timestamp - refTime) / 1000 - event.audioDuration) * 1000)}ms`,
+                        });
+                        return memo;
+                    }, []),
             },
         ],
     );
