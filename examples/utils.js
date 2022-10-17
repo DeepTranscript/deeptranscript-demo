@@ -1,27 +1,28 @@
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
+
 const fs = require('fs');
 const path = require('path');
-const stream = require('stream');
-const { last, isNull, isEmpty } = require('lodash');
+const { last, isEmpty } = require('lodash');
 const { mkdirSync, writeFileSync } = require('fs');
 const { execSync } = require('child_process');
 
 function roundMs(value) {
-    return Math.round((value + Number.EPSILON) * 1000) / 1000;
+  return Math.round((value + Number.EPSILON) * 1000) / 1000;
 }
 exports.roundMs = roundMs;
 
 function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks = []) {
-    fs.mkdirSync(`${outputDir}/audacity_data`, { recursive: true });
-    execSync(`ffmpeg -y -loglevel quiet -i ${fileName} -map_channel 0.0.${channel} ${outputDir}/audacity_data/${path.basename(fileName)}_channel.wav`);
-    const getLabel = (l) => `<label t="${l.start}" t1="${l.end}" title="${l.text}"/>`;
-    const getTrack = (t) => `
+  fs.mkdirSync(`${outputDir}/audacity_data`, { recursive: true });
+  execSync(`ffmpeg -y -loglevel quiet -i ${fileName} -map_channel 0.0.${channel} ${outputDir}/audacity_data/${path.basename(fileName)}_channel.wav`);
+  const getLabel = (l) => `<label t="${l.start}" t1="${l.end}" title="${l.text}"/>`;
+  const getTrack = (t) => `
         <labeltrack name="${t.trackName}" numlabels="${t.labels.length}" height="${t.height || 73}" minimized="0" isSelected="0">
         ${t.labels.map(getLabel).join('\n')}
         </labeltrack>`;
-    const preTracksString = preTracks.map(getTrack);
-    const postTracksString = postTracks.map(getTrack);
-    console.log(`writing audacity file at ${outputDir}/audacity.aup`);
-    fs.writeFileSync(`${outputDir}/audacity.aup`, `<?xml version="1.0" standalone="no" ?>
+  const preTracksString = preTracks.map(getTrack);
+  const postTracksString = postTracks.map(getTrack);
+  console.log(`writing audacity file at ${outputDir}/audacity.aup`);
+  fs.writeFileSync(`${outputDir}/audacity.aup`, `<?xml version="1.0" standalone="no" ?>
               <!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
               <project xmlns="http://audacity.sourceforge.net/xml/" projname="{source_name}_data" version="1.3.0" audacityversion="2.2.1" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="150" rate="16000.0" snapto="off" selectionformat="seconds" frequencyformat="Hz" bandwidthformat="octaves">
                      <tags>
@@ -39,82 +40,82 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
 exports.createAudacity = createAudacity;
 
 function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
-    if (!tracing.hasOwnProperty('apiEvents')) {
-        console.error('Can not generate audacity file missing objects');
-        return;
-    }
+  const lastEvent = last(tracing.apiEvents);
+  mkdirSync(`${outputDir}/deeptranscript-${lastEvent.uid}`);
+  // Write all events on disk.
+  writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.apiEvents.json`, JSON.stringify(tracing.apiEvents), { encoding: 'utf-8' });
 
-    const lastEvent = last(tracing.apiEvents);
-    mkdirSync(`${outputDir}/deeptranscript-${lastEvent.uid}`);
-    // Write all events on disk.
-    writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.apiEvents.json`, JSON.stringify(tracing.apiEvents), { encoding: 'utf-8' });
+  const fileOutputName = `${outputDir}/deeptranscript-${lastEvent.uid}/${lastEvent.uid}.wav`;
+  if (Object.hasOwn(source, 'path')) {
+    execSync(`ffmpeg -y -loglevel quiet -f ${source.format} -sample_rate ${source.sampleRate} -i ${source.path} -map_channel 0.0.${source.channel} ${fileOutputName}`);
+  } else {
+    // We assume it's from mic
+    const micFileName = `${outputDir}/deeptranscript-${lastEvent.uid}/mic.pcm`;
+    writeFileSync(micFileName, source.data, { encoding: 'binary' });
+    execSync(`ffmpeg -y -loglevel quiet -f s16le -sample_rate ${source.sampleRate} -i ${micFileName} -map_channel 0.0.${source.channel} ${fileOutputName}`);
+  }
 
-    const fileOutputName = `${outputDir}/deeptranscript-${lastEvent.uid}/${lastEvent.uid}.wav`;
-    if (source.hasOwnProperty('path')) {
-        execSync(`ffmpeg -y -loglevel quiet -f ${source.format} -sample_rate ${source.sampleRate} -i ${source.path} -map_channel 0.0.${source.channel} ${fileOutputName}`);
-    } else {
-        // We assume it's from mic
-        const micFileName = `${outputDir}/deeptranscript-${lastEvent.uid}/mic.pcm`;
-        writeFileSync(micFileName, source.data, { encoding: 'binary' });
-        execSync(`ffmpeg -y -loglevel quiet -f s16le -sample_rate ${source.sampleRate} -i ${micFileName} -map_channel 0.0.${source.channel} ${fileOutputName}`);
-    }
+  createAudacity(
+    `${outputDir}/deeptranscript-${lastEvent.uid}`,
+    fileOutputName,
+    0,
+    [
+      {
+        trackName: 'words',
+        labels: lastEvent.speeches
+          .reduce((m, s) => m.concat(s.words), [])
+          .map((word, _i) => ({
+            start: word.start,
+            end: word.end,
+            text: `text:${word.text}`,
+          })),
+      },
+    ],
+    [
+      {
+        trackName: 'status',
+        height: 50,
+        labels: tracing.apiEvents.reduce(
+          (memo, event, _i) => {
+            const currentState = memo[memo.length - 1];
 
-    createAudacity(
-        `${outputDir}/deeptranscript-${lastEvent.uid}`,
-        fileOutputName,
-        0,
-        [
-            {
-                trackName: 'words',
-                labels: lastEvent.speeches
-                    .reduce((m, s) => m.concat(s.words), [])
-                    .map((word, i) => ({
-                        start: word.start,
-                        end: word.end,
-                        text: `text:${word.text}`,
-                    })),
-            },
-        ],
-        [
-            {
-                trackName: 'status',
-                height: 50,
-                labels:  tracing.apiEvents.reduce(
-                    (memo, event, i) => {
-                        const currentState = memo[memo.length - 1];
+            if (event.status === currentState.text) {
+              return memo;
+            }
+            const currentLocationSeconds = roundMs((event.timestamp - refTime) / 1000);
+            currentState.end = currentLocationSeconds;
+            memo.push({
+              start: currentLocationSeconds,
+              end: currentLocationSeconds,
+              text: event.status,
+            });
+            return memo;
+          },
+          [{ start: 0, text: 'transcribing', end: null }],
+        ),
+      },
+      {
+        trackName: 'speeches',
+        height: 300,
+        labels: tracing.apiEvents.filter((e) => e.speeches && e.speeches.length && e.text !== null)
+          .reduce((memo, event, i) => {
+            const speech = last(event.speeches);
+            memo.push({
+              start: speech.start,
+              end: event.audioDuration,
+              text: `#${i}:audio:${isEmpty(speech.text) ? 'empty' : speech.text}`,
+            });
+            memo.push({
+              start: event.audioDuration,
+              end: roundMs((event.timestamp - refTime) / 1000),
+              text: `#${i}:latency:${Math.round(((event.timestamp - refTime) / 1000 - event.audioDuration) * 1000)}ms`,
+            });
+            return memo;
+          }, []),
+      },
+    ],
+  );
 
-                        if (event.status === currentState.text) {
-                            return memo;
-                        }
-                        const currentLocationSeconds = roundMs((event.timestamp - refTime) / 1000)
-                        currentState.end = currentLocationSeconds;
-                        memo.push({ start: currentLocationSeconds, end: currentLocationSeconds, text: event.status});
-                        return memo;
-                    },
-                    [{ start: 0, text: "transcribing", end: null}]),
-            },
-            {
-                trackName: 'speeches',
-                height: 300,
-                labels: tracing.apiEvents.filter((e) => e.speeches && e.speeches.length && e.text !== null).reduce(
-                    (memo, event, i) => {
-                        const speech = last(event.speeches);
-                        memo.push({
-                            start: speech.start,
-                            end: event.audioDuration,
-                            text: `#${i}:audio:${isEmpty(speech.text) ? 'empty' : speech.text}`,
-                        });
-                        memo.push({
-                            start: event.audioDuration,
-                            end: roundMs((event.timestamp - refTime) / 1000),
-                            text: `#${i}:latency:${Math.round(((event.timestamp - refTime) / 1000 - event.audioDuration) * 1000)}ms`,
-                        });
-                        return memo;
-                    }, []),
-            },
-        ],
-    );
-
-    return `${outputDir}/deeptranscript-${lastEvent.uid}/audacity.aup`
+  return `${outputDir}/deeptranscript-${lastEvent.uid}/audacity.aup`;
 }
 exports.generateTracing = generateTracing;
