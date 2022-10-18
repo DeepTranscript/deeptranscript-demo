@@ -1,18 +1,18 @@
 const mic = require('mic'); // requires arecord or sox, see https://www.npmjs.com/package/mic
 const querystring = require('querystring');
 const request = require('request');
-
-const API_TOKEN = process.env.API_TOKEN;  // see https://app.deeptranscript.com/account/members
-
-if (!API_TOKEN) {
-  throw new Error(`API_TOKEN required`);
-}
-
 const readline = require('readline').createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
+const { API_TOKEN } = process.env; // see https://app.deeptranscript.com/account/members
+
+if (!API_TOKEN) {
+  throw new Error('API_TOKEN required');
+}
+
+let start = new Date().valueOf();
 const sampleRate = 8000;
 const micInstance = mic({
   rate: sampleRate.toString(),
@@ -26,11 +26,11 @@ micInstance.start();
 
 const qs = querystring.stringify({
   language: process.env.LANGUAGE || 'en',
-  sampleRate: sampleRate,  // WARN: must match mic configuration
-  dataFormat: 's16le',   // WARN: must match mic configuration
+  sampleRate, // WARN: must match mic configuration
+  dataFormat: 's16le', // WARN: must match mic configuration
   // expectedPhrases: ['Deeptranscript rocks!'],
   localizeWords: 1,
-})
+});
 const uri = `https://stream.deeptranscript.com/?${qs}`;
 
 micStream.pipe(request({

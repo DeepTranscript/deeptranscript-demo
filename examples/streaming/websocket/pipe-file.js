@@ -8,14 +8,14 @@ const { generateTracing } = require('../../utils');
 const { API_TOKEN } = process.env; // see https://app.deeptranscript.com/account/members
 
 if (!API_TOKEN) {
-    throw new Error(`API_TOKEN required`);
+  throw new Error('API_TOKEN required');
 }
 
 const chunks = [];
 const tracing = { apiEvents: [] };
 const outputDir = '/tmp';
 const sampleRate = 8000;
-const dataFormat = 'wav';  // use s16le for raw audio
+const dataFormat = 'wav'; // use s16le for raw audio
 const fileName = `${__dirname}/../../_files/count.wav`;
 
 // Split file in small parts and send them with the right delay to simulate live-streaming
@@ -69,19 +69,19 @@ const qs = querystring.stringify({
 });
 const socket = new ws.WebSocket(`wss://:${API_TOKEN}@stream.deeptranscript.com/?${qs}`);
 socket.once('open', () => {
-    console.log('socket opened');
-    // Raw data is sent as is, no preprocessing needed
-    audioStream.on('data', (bytes) => {
-        socket.send(bytes, { binary: true });
-        chunks.push(bytes);
-    });
+  console.log('socket opened');
+  // Raw data is sent as is, no preprocessing needed
+  audioStream.on('data', (bytes) => {
+    socket.send(bytes, { binary: true });
+    chunks.push(bytes);
+  });
 
-    // IMPORTANT: send an empty buffer to tell DT to terminate
-    // if you don't, transcription will stop automatically after 3s not receiving any data
-    audioStream.on('end', () => {
-        chunks.push(Buffer.alloc(0));
-        socket.send(Buffer.from([]), { binary: true });
-    });
+  // IMPORTANT: send an empty buffer to tell DT to terminate
+  // if you don't, transcription will stop automatically after 3s not receiving any data
+  audioStream.on('end', () => {
+    chunks.push(Buffer.alloc(0));
+    socket.send(Buffer.from([]), { binary: true });
+  });
 });
 socket.on('error', (err) => console.error(err));
 socket.on('message', (data) => {

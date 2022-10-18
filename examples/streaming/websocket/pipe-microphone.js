@@ -1,19 +1,17 @@
 const mic = require('mic'); // requires arecord or sox, see https://www.npmjs.com/package/mic
 const querystring = require('querystring');
 const ws = require('ws');
-
+const readline = require('readline').createInterface({
+  input: process.stdin,
+  output: process.stdout,
+});
 const { generateTracing } = require('../../utils');
 
 const { API_TOKEN } = process.env; // see https://app.deeptranscript.com/account/members
 
 if (!API_TOKEN) {
-  throw new Error(`API_TOKEN required`);
+  throw new Error('API_TOKEN required');
 }
-
-const readline = require('readline').createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
 
 const chunks = [];
 const tracing = { apiEvents: [] };

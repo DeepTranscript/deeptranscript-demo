@@ -42,18 +42,13 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
 exports.createAudacity = createAudacity;
 
 function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
-  if (!tracing.hasOwnProperty('apiEvents')) {
-    console.error('Can not generate audacity file missing objects');
-    return;
-  }
-
   const lastEvent = last(tracing.apiEvents);
   mkdirSync(`${outputDir}/deeptranscript-${lastEvent.uid}`);
   // Write all events on disk.
   writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.apiEvents.json`, JSON.stringify(tracing.apiEvents), { encoding: 'utf-8' });
 
   const fileOutputName = `${outputDir}/deeptranscript-${lastEvent.uid}/${lastEvent.uid}.wav`;
-  if (source.hasOwnProperty('path')) {
+  if (source.path) {
     execSync(`ffmpeg -y -loglevel quiet -f ${source.format === 'wav' ? 's16le' : source.format} -sample_rate ${source.sampleRate} -i ${source.path} -map_channel 0.0.${source.channel} ${fileOutputName}`);
   } else {
     // We assume it's from mic
