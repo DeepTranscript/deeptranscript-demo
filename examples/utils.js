@@ -20,7 +20,7 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
         </labeltrack>`;
     const preTracksString = preTracks.map(getTrack);
     const postTracksString = postTracks.map(getTrack);
-    console.log(`writing audacity file at ${outputDir}/audacity.aup`);
+    // console.log(`writing audacity file at ${outputDir}/audacity.aup`);
     fs.writeFileSync(`${outputDir}/audacity.aup`, `<?xml version="1.0" standalone="no" ?>
               <!DOCTYPE project PUBLIC "-//audacityproject-1.3.0//DTD//EN" "http://audacity.sourceforge.net/xml/audacityproject-1.3.0.dtd" >
               <project xmlns="http://audacity.sourceforge.net/xml/" projname="{source_name}_data" version="1.3.0" audacityversion="2.2.1" sel0="0.0000000000" sel1="0.0000000000" vpos="0" h="0.0000000000" zoom="150" rate="16000.0" snapto="off" selectionformat="seconds" frequencyformat="Hz" bandwidthformat="octaves">
@@ -39,7 +39,7 @@ function createAudacity(outputDir, fileName, channel, preTracks = [], postTracks
 exports.createAudacity = createAudacity;
 
 function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
-    if (!tracing.hasOwnProperty('apiEvents') || !tracing.hasOwnProperty('clientBytesEvents')) {
+    if (!tracing.hasOwnProperty('apiEvents')) {
         console.error('Can not generate audacity file missing objects');
         return;
     }
@@ -48,11 +48,10 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
     mkdirSync(`${outputDir}/deeptranscript-${lastEvent.uid}`);
     // Write all events on disk.
     writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.apiEvents.json`, JSON.stringify(tracing.apiEvents), { encoding: 'utf-8' });
-    writeFileSync(`${outputDir}/deeptranscript-${lastEvent.uid}/tracing.clientsBytesEvents.json`, JSON.stringify(tracing.clientBytesEvents), { encoding: 'utf-8' });
 
     const fileOutputName = `${outputDir}/deeptranscript-${lastEvent.uid}/${lastEvent.uid}.wav`;
     if (source.hasOwnProperty('path')) {
-        execSync(`ffmpeg -y -loglevel quiet -f ${source.format} -sample_rate ${source.sampleRate} -i ${source.path} -map_channel 0.0.${source.channel} ${fileOutputName}`);
+        execSync(`ffmpeg -y -loglevel quiet -f ${source.format === 'wav' ? 's16le' : source.format} -sample_rate ${source.sampleRate} -i ${source.path} -map_channel 0.0.${source.channel} ${fileOutputName}`);
     } else {
         // We assume it's from mic
         const micFileName = `${outputDir}/deeptranscript-${lastEvent.uid}/mic.pcm`;
