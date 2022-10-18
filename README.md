@@ -1,4 +1,6 @@
-![logo deeptranscript](./docs/logo.png)
+[![CI](https://github.com/DeepTranscript/deeptranscript-demo/actions/workflows/lint.yml/badge.svg)](https://github.com/DeepTranscript/deeptranscript-demo/actions/workflows/lint.yml)
+
+![logo deeptranscript](./docs/logo_round.png)
 
 [DeepTranscript](https://www.deeptranscript.com) provides state-of-the-art speech-to-text accuracy in both english and french languages.
 In this repository you will see how simple it is to integrate to [DeepTranscript High Availability API](https://app.deeptranscript.com/documentation).
@@ -24,7 +26,7 @@ See [./examples/batch-mode](./examples/batch-mode) and [API documentation](https
 With **[HTTP streaming](https://app.deeptranscript.com/documentation#operation/transcriptions_http_stream)**, you can pipe up to 60s of raw audio data to a standard HTTP request. Once input stream ends you get transcription results in no time.
 
 
-**CURL example**
+**cURL example**
 ```shell
 $ getAudioStreamSomehow | curl \
   -H "Authorization: Bearer [API_TOKEN]" \
