@@ -100,18 +100,33 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
         trackName: 'speeches',
         height: 300,
         labels: tracing.apiEvents.filter((e) => e.speeches && e.speeches.length && e.text !== null)
-          .reduce((memo, event, i) => {
+          .reduce((memo, event, i, all) => {
+            const prevEvent = all[i - 1];
             const speech = last(event.speeches);
-            memo.push({
-              start: speech.start,
-              end: event.audioDuration,
-              text: `#${i}:audio:${isEmpty(speech.text) ? 'empty' : speech.text}`,
-            });
-            memo.push({
-              start: event.audioDuration,
-              end: roundMs((event.timestamp - refTime) / 1000),
-              text: `#${i}:latency:${Math.round(((event.timestamp - refTime) / 1000 - event.audioDuration) * 1000)}ms`,
-            });
+            const lastWord = last(speech.words);
+            // eslint-disable-next-line max-len
+            const speechEnd = lastWord && !isEmpty(lastWord.text) ? lastWord.end : event.audioDuration;
+            if (prevEvent && prevEvent.status === 'waiting' && event.status === 'done') {
+              return memo;
+            }
+            if (prevEvent && prevEvent.status === 'waiting' && event.status === 'transcribing') {
+              memo.push({
+                start: roundMs((event.timestamp - refTime) / 1000),
+                end: roundMs((event.timestamp - refTime) / 1000),
+                text: `#${i}:restart`,
+              });
+            } else {
+              memo.push({
+                start: speech.start,
+                end: speechEnd,
+                text: `#${i}:audio:${isEmpty(speech.text) ? 'empty' : speech.text}`,
+              });
+              memo.push({
+                start: speechEnd,
+                end: roundMs((event.timestamp - refTime) / 1000),
+                text: `#${i}:latency:${Math.round(((event.timestamp - refTime) / 1000 - speechEnd) * 1000)}ms`,
+              });
+            }
             return memo;
           }, []),
       },
