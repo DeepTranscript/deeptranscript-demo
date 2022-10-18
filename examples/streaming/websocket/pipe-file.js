@@ -90,9 +90,14 @@ socket.on('message', (data) => {
 });
 socket.on('close', () => {
   // This will create an audacity file with a timeline of events and data
-  const audacityFname = generateTracing(refTime, outputDir, {
-    path: fileName, sampleRate, channel: 0, format: dataFormat,
-  }, tracing);
+  const audacityFname = generateTracing(
+    refTime,
+    outputDir,
+    {
+      path: fileName, sampleRate, channel: 0, format: dataFormat,
+    },
+    tracing,
+  );
   console.log(`websocket close event received => transcription complete\nSee "$ audacity ${audacityFname}" for more info`);
   process.exit(0);
 });
