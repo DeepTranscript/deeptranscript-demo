@@ -63,18 +63,6 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
     0,
     [
       {
-        trackName: 'words',
-        labels: lastEvent.speeches
-          .reduce((m, s) => m.concat(s.words), [])
-          .map((word, _i) => ({
-            start: word.start,
-            end: word.end,
-            text: `text:${word.text}`,
-          })),
-      },
-    ],
-    [
-      {
         trackName: 'status',
         height: 50,
         labels: tracing.apiEvents.reduce(
@@ -95,6 +83,18 @@ function generateTracing(refTime, outputDir, source = {}, tracing = {}) {
           },
           [{ start: 0, text: 'transcribing', end: null }],
         ),
+      },
+    ],
+    [
+      {
+        trackName: 'words',
+        labels: lastEvent.speeches
+          .reduce((m, s) => m.concat(s.words), [])
+          .map((word, _i) => ({
+            start: word.start,
+            end: word.end,
+            text: `text:${word.text}`,
+          })),
       },
       {
         trackName: 'speeches',
