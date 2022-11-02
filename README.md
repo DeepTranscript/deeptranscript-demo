@@ -80,4 +80,14 @@ $ curl https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip --outpu
 
 ## Troubleshooting
 
-If anything goes wrong you will find all the information you need on [DeepTranscript Console](https://app.deeptranscript.com)
+If anything goes wrong you will find informations in [DeepTranscript Console](https://app.deeptranscript.com)
+
+### Bad request
+
+Ensure the protocol and port are matching (`wss` and `443`)
+
+```shell script
+$ websocat ws://stream.deeptranscript.com:443/
+websocat: WebSocketError: Received unexpected status code (400 Bad Request)
+websocat: error running
+```
